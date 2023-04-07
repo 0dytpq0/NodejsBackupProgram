@@ -63,7 +63,7 @@ let farmList = [
 ];
 
 //기존코드 파일,zip 다 생성
-//sql 파일만 생성
+
 const dt = moment().format('YYYYMMDD_HHmmss');
 let fname = `DataBase/${folderName}-${dt}.sql`;
 
@@ -96,17 +96,17 @@ const run = async () => {
       console.log(err);
     });
 };
-//즉시실행 할때 사용
-// (async () => {
-//   for (const item of farmList) {
-//     hostName = item.url;
-//     folderName = item.Name;
-//     fname = `DataBase/${folderName}-${dt}.sql`.trim();
-//     // zname = `DataBase/${folderName}-${dt}.zip`.trim();
-//     await run();
-//   }
-//   console.log('모든 백업이 종료되었습니다.');
-// })();
+// 즉시실행 할때 사용
+(async () => {
+  for (const item of farmList) {
+    hostName = item.url;
+    folderName = item.Name;
+    fname = `DataBase/${folderName}-${dt}.sql`.trim();
+    // zname = `DataBase/${folderName}-${dt}.zip`.trim();
+    await run();
+  }
+  console.log('모든 백업이 종료되었습니다.');
+})();
 
 //오전 12시 오후 12시 하루 두번 백업 스케쥴링
 schedule.scheduleJob('0 0,12 * * *', async () => {
