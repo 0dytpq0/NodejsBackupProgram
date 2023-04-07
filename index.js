@@ -3,6 +3,7 @@ const { exec, spawn } = require('child_process');
 const fs = require('fs');
 const JSZip = require('jszip');
 const schedule = require('node-schedule');
+const os = require('os');
 let mysqlUser = 'root';
 let mysqlPassword = 'ekdnsel';
 let hostName = '127.0.0.1';
@@ -69,32 +70,38 @@ let fname = `DataBase/${folderName}-${dt}.sql`;
 
 let zname = `DataBase/${folderName}-${dt}.zip`;
 
+console.log('os.flatform()', os.platform());
 const run = async () => {
   if (!fs.existsSync('DataBase')) {
     fs.mkdirSync('DataBase');
   }
-  let wStream = fs.createWriteStream(fname);
-  console.log('DB file 생성중...');
-  let mySqlDump = spawn('c:/xampp/mysql/bin/mysqldump', [
-    `-u${mysqlUser}`,
-    `-p${mysqlPassword}`,
-    `-h${hostName}`,
-    '--routines',
-    '--events',
-    '--triggers',
-    '--add-drop-table',
-    '--databases',
-    'dawoon',
-  ]);
+  return new Promise(async (resolve, reject) => {
+    let wStream = fs.createWriteStream(fname);
+    console.log('DB file 생성중...');
+    let mySqlDump = spawn('c:/xampp/mysql/bin/mysqldump', [
+      `-u${mysqlUser}`,
+      `-p${mysqlPassword}`,
+      `-h${hostName}`,
+      '--routines',
+      '--events',
+      '--triggers',
+      '--add-drop-table',
+      '--databases',
+      'dawoon',
+    ]);
 
-  mySqlDump.stdout
-    .pipe(wStream)
-    .on('finish', function () {
-      wStream.end();
-    })
-    .on('error', function (err) {
-      console.log(err);
-    });
+    mySqlDump.stdout
+      .pipe(wStream)
+      .on('finish', function () {
+        console.log(`${folderName}DB백업 완료`);
+        wStream.end();
+        resolve();
+      })
+      .on('error', function (err) {
+        console.log(`${folderName}DB백업 실패`, err);
+        reject();
+      });
+  });
 };
 // 즉시실행 할때 사용
 (async () => {
