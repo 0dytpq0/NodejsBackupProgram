@@ -73,54 +73,36 @@ const run = async () => {
   if (!fs.existsSync('DataBase')) {
     fs.mkdirSync('DataBase');
   }
-  return new Promise(async (resolve, reject) => {
-    let wStream = fs.createWriteStream(fname);
-    console.log('DB file 생성중...');
-    let mySqlDump = spawn('c:/xampp/mysql/bin/mysqldump', [
-      `-u${mysqlUser}`,
-      `-p${mysqlPassword}`,
-      `-h${hostName}`,
-      '--routines',
-      '--events',
-      '--triggers',
-      '--add-drop-table',
-      '--databases',
-      'dawoon',
-    ]);
+  let wStream = fs.createWriteStream(fname);
+  console.log('DB file 생성중...');
+  let mySqlDump = spawn('c:/xampp/mysql/bin/mysqldump', [
+    `-u${mysqlUser}`,
+    `-p${mysqlPassword}`,
+    `-h${hostName}`,
+    '--routines',
+    '--events',
+    '--triggers',
+    '--add-drop-table',
+    '--databases',
+    'dawoon',
+  ]);
 
-    mySqlDump.stdout
-      .pipe(wStream)
-      .on('finish', async function () {
-        console.log('생성된 파일 압축중...');
-        const jsZip = new JSZip();
-        jsZip.file(fname, fs.readFileSync(fname));
-        try {
-          let content = await jsZip.generateAsync({
-            type: 'nodebuffer',
-            compression: 'DEFLATE',
-          });
-          fs.writeFileSync(zname, content, 'binary');
-          console.log('완료!');
-          wStream.end();
-          resolve();
-        } catch (err) {
-          console.error('압축중 에러 발생:', err);
-          reject(err);
-        }
-      })
-      .on('error', function (err) {
-        console.log(err);
-        reject(err);
-      });
-  });
+  mySqlDump.stdout
+    .pipe(wStream)
+    .on('finish', function () {
+      wStream.end();
+    })
+    .on('error', function (err) {
+      console.log(err);
+    });
 };
-// //즉시실행 할때 사용
+//즉시실행 할때 사용
 // (async () => {
 //   for (const item of farmList) {
 //     hostName = item.url;
 //     folderName = item.Name;
-//     fname = `DataBase/${folderName}-${dt}.sql`;
-//     zname = `DataBase/${folderName}-${dt}.zip`;
+//     fname = `DataBase/${folderName}-${dt}.sql`.trim();
+//     // zname = `DataBase/${folderName}-${dt}.zip`.trim();
 //     await run();
 //   }
 //   console.log('모든 백업이 종료되었습니다.');
@@ -131,11 +113,62 @@ schedule.scheduleJob('0 0,12 * * *', async () => {
   for (const item of farmList) {
     hostName = item.url;
     folderName = item.Name;
-    fname = `DataBase/${folderName}-${dt}.sql`;
-    zname = `DataBase/${folderName}-${dt}.zip`;
+    fname = `DataBase/${folderName}-${dt}.sql`.trim();
+    // zname = `DataBase/${folderName}-${dt}.zip`.trim();
     await run();
   }
 });
+//zip,file 둘다생성
+// const dt = moment().format('YYYYMMDD_HHmmss');
+// let fname = `DataBase/${folderName}-${dt}.sql`;
+
+// let zname = `DataBase/${folderName}-${dt}.zip`;
+
+// const run = async () => {
+//   if (!fs.existsSync('DataBase')) {
+//     fs.mkdirSync('DataBase');
+//   }
+//   return new Promise(async (resolve, reject) => {
+//     let wStream = fs.createWriteStream(fname);
+//     console.log('DB file 생성중...');
+//     let mySqlDump = spawn('c:/xampp/mysql/bin/mysqldump', [
+//       `-u${mysqlUser}`,
+//       `-p${mysqlPassword}`,
+//       `-h${hostName}`,
+//       '--routines',
+//       '--events',
+//       '--triggers',
+//       '--add-drop-table',
+//       '--databases',
+//       'dawoon',
+//     ]);
+
+//     mySqlDump.stdout
+//       .pipe(wStream)
+//       .on('finish', async function () {
+//         console.log('생성된 파일 압축중...');
+//         const jsZip = new JSZip();
+//         jsZip.file(fname, fs.readFileSync(fname));
+//         try {
+//           let content = await jsZip.generateAsync({
+//             type: 'nodebuffer',
+//             compression: 'DEFLATE',
+//           });
+//           fs.writeFileSync(zname, content, 'binary');
+//           console.log('완료!');
+//           wStream.end();
+//           resolve();
+//         } catch (err) {
+//           console.error('압축중 에러 발생:', err);
+//           reject(err);
+//         }
+//       })
+//       .on('error', function (err) {
+//         console.log(err);
+//         reject(err);
+//       });
+//   });
+// };
 
 //zip만 생성
 
