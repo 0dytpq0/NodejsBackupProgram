@@ -63,7 +63,7 @@ let farmList = [
 ];
 
 //기존코드 파일,zip 다 생성
-
+//sql 파일만 생성
 const dt = moment().format('YYYYMMDD_HHmmss');
 let fname = `DataBase/${folderName}-${dt}.sql`;
 
