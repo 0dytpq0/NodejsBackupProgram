@@ -1,4 +1,4 @@
-const moment = require('moment');
+const moment = require('moment-timezone');
 const { exec, spawn } = require('child_process');
 const fs = require('fs');
 const JSZip = require('jszip');
@@ -65,7 +65,7 @@ let farmList = [
 
 //기존코드 파일,zip 다 생성
 
-const dt = moment().format('YYYYMMDD_HHmmss');
+let dt = moment().format('YYYYMMDD_HHmmss');
 let fname = `DataBase/${folderName}-${dt}.sql`;
 
 let zname = `DataBase/${folderName}-${dt}.zip`;
@@ -78,17 +78,30 @@ const run = async () => {
   return new Promise(async (resolve, reject) => {
     let wStream = fs.createWriteStream(fname);
     console.log('DB file 생성중...');
-    let mySqlDump = spawn('c:/xampp/mysql/bin/mysqldump', [
-      `-u${mysqlUser}`,
-      `-p${mysqlPassword}`,
-      `-h${hostName}`,
-      '--routines',
-      '--events',
-      '--triggers',
-      '--add-drop-table',
-      '--databases',
-      'dawoon',
-    ]);
+    let mySqlDump;
+    os.platform() === 'win32'
+      ? (mySqlDump = spawn('c:/xampp/mysql/bin/mysqldump', [
+          `-u${mysqlUser}`,
+          `-p${mysqlPassword}`,
+          `-h${hostName}`,
+          '--routines',
+          '--events',
+          '--triggers',
+          '--add-drop-table',
+          '--databases',
+          'dawoon',
+        ]))
+      : (mySqlDump = spawn('/usr/bin/mysqldump', [
+          `-u${mysqlUser}`,
+          `-p${mysqlPassword}`,
+          `-h${hostName}`,
+          '--routines',
+          '--events',
+          '--triggers',
+          '--add-drop-table',
+          '--databases',
+          'dawoon',
+        ]));
 
     mySqlDump.stdout
       .pipe(wStream)
@@ -116,8 +129,9 @@ const run = async () => {
 })();
 
 //오전 12시 오후 12시 하루 두번 백업 스케쥴링
-schedule.scheduleJob('0 0,12 * * *', async () => {
+schedule.scheduleJob('0 0,12 * * * *', async () => {
   for (const item of farmList) {
+    dt = moment().format('YYYYMMDD_HHmmss');
     hostName = item.url;
     folderName = item.Name;
     fname = `DataBase/${folderName}-${dt}.sql`.trim();
