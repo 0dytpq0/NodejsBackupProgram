@@ -129,7 +129,7 @@ const run = async () => {
 })();
 
 //오전 12시 오후 12시 하루 두번 백업 스케쥴링
-schedule.scheduleJob('0 0,12 * * * *', async () => {
+schedule.scheduleJob('0 0,12 * * *', async () => {
   for (const item of farmList) {
     dt = moment().format('YYYYMMDD_HHmmss');
     hostName = item.url;
