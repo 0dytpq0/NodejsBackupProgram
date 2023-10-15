@@ -8,59 +8,12 @@ let mysqlUser = 'root';
 let mysqlPassword = 'ekdnsel';
 let hostName = '127.0.0.1';
 let folderName = 'local';
+// 회사 정보 이므로 제거.
 let farmList = [
   {
-    Name: '양주-쇠골목장',
-    url: '4039-op.dawoon',
-  },
-  {
-    Name: '함안-부흥목장',
-    url: '4046-op.dawoon',
-  },
-  {
-    Name: '보성-수종목장',
-    url: '4055-sv.dawoon',
-  },
-  {
-    Name: '파주-증환목장',
-    url: '4060-op.dawoon',
-  },
-  {
-    Name: '성환-축산과학원',
-    url: '3873-op.dawoon',
-  },
-  {
-    Name: '당진-병정목장',
-    url: '4062-op.dawoon',
-  },
-  {
-    Name: '강진-농업기술원',
-    url: '3943-op.dawoon',
-  },
-  {
-    Name: '예산-가람목장',
-    url: '4066-op.dawoon',
-  },
-  {
-    Name: '이천-차원목장',
-    url: '4064-op.dawoon',
-  },
-  {
-    Name: '서산-태광목장',
-    url: '4045-op.dawoon',
-  },
-  {
-    Name: '강화-브니엘',
-    url: '4067-op.dawoon',
-  },
-  {
-    Name: '경주-이레목장',
-    url: '3406-sv.dawoon',
-  },
-  {
-    Name: '양평-믿음목장',
-    url: '3412-op.dawoon',
-  },
+    Name: '목장 이름',
+    url: 'db주소',
+  }
 ];
 
 //기존코드 파일,zip 다 생성
